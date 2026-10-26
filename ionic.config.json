@@ -1,0 +1,7 @@
+{
+  "name": "Soyol Delivery",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "custom"
+}

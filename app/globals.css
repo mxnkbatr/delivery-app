@@ -1,0 +1,823 @@
+/* Inter font is loaded via next/font in layout.tsx – no duplicate @import to avoid render-blocking request */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Luxury Typography */
+@layer base {
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior-y: none;
+    background: var(--soyol-canvas);
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  @media (max-width: 768px) {
+    ::-webkit-scrollbar {
+      display: none !important;
+    }
+
+    * {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+    }
+  }
+}
+
+:root {
+  /* Soyol Delivery — modern brand system */
+  --brand-primary: #FF4500;
+  --brand-primary-light: #FF6A33;
+  --brand-primary-dark: #D93A00;
+  --brand-secondary: #0F172A;
+  --brand-accent: #FF4500;
+
+  --soyol-ink: #0f172a;
+  --soyol-muted: #64748b;
+  --soyol-soft: #94a3b8;
+  --soyol-line: rgba(15, 23, 42, 0.08);
+  --soyol-surface: #ffffff;
+  --soyol-canvas: #f3f5f9;
+  --soyol-canvas-2: #e8ecf3;
+  --soyol-brand: #ff4500;
+  --soyol-brand-soft: rgba(255, 69, 0, 0.1);
+  --soyol-success: #16a34a;
+  --soyol-info: #0284c7;
+  --soyol-radius: 20px;
+  --soyol-radius-sm: 14px;
+  --soyol-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
+  --soyol-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.04), 0 16px 40px rgba(15, 23, 42, 0.08);
+
+  /* iOS System Colors (compat) */
+  --ios-bg: #FFFFFF;
+  --ios-grouped-bg: #F3F5F9;
+  --ios-secondary-bg: #F8FAFC;
+  --ios-border: #E2E8F0;
+  --ios-text-secondary: #64748B;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(15, 23, 42, 0.06);
+  --glass-shadow: rgba(15, 23, 42, 0.04);
+}
+
+/* ── Dark mode tokens (html.dark from ThemeProvider) ── */
+html.dark {
+  color-scheme: dark;
+
+  --brand-secondary: #e2e8f0;
+
+  --soyol-ink: #f1f5f9;
+  --soyol-muted: #94a3b8;
+  --soyol-soft: #64748b;
+  --soyol-line: rgba(148, 163, 184, 0.14);
+  --soyol-surface: #151a22;
+  --soyol-canvas: #0b0e13;
+  --soyol-canvas-2: #12161e;
+  --soyol-brand-soft: rgba(255, 69, 0, 0.18);
+  --soyol-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --soyol-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.3), 0 16px 40px rgba(0, 0, 0, 0.4);
+
+  --ios-bg: #0b0e13;
+  --ios-grouped-bg: #0b0e13;
+  --ios-secondary-bg: #151a22;
+  --ios-border: rgba(148, 163, 184, 0.16);
+  --ios-text-secondary: #94a3b8;
+
+  /* Delivery tokens (so var(--ios-*) works outside .ios-root too) */
+  --ios-bg-elevated: #151a22;
+  --ios-label: #f1f5f9;
+  --ios-secondary: #94a3b8;
+  --ios-tertiary: #64748b;
+  --ios-separator: rgba(148, 163, 184, 0.14);
+  --ios-fill: #1a2130;
+  --ios-fill-secondary: #12161e;
+  --ios-brand: #ff4500;
+  --ios-brand-2: #ff6a33;
+  --ios-cyan: #22d3ee;
+  --ios-red: #f87171;
+  --ios-green: #4ade80;
+
+  --glass-bg: rgba(21, 26, 34, 0.88);
+  --glass-border: rgba(148, 163, 184, 0.12);
+  --glass-shadow: rgba(0, 0, 0, 0.35);
+}
+
+html.dark .glass-white {
+  background: rgba(21, 26, 34, 0.92);
+  border-bottom-color: rgba(255, 69, 0, 0.45);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
+html.dark .card-clean {
+  background: var(--soyol-surface);
+  border-color: var(--soyol-line);
+  box-shadow: var(--soyol-shadow);
+}
+
+html.dark .ios-blur {
+  background: rgba(21, 26, 34, 0.86);
+}
+
+html.dark .ios-card,
+html.dark .ios-grouped-list,
+html.dark .ios-grouped-item {
+  background-color: var(--soyol-surface);
+  border-color: var(--soyol-line);
+}
+
+html.dark .ios-grouped-item:active {
+  background-color: #1c2330;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  /* Prevent blue outline outline on focus in native webviews */
+  outline: none;
+}
+
+/* Prevent image dragging to make it feel native */
+img {
+  -webkit-user-drag: none;
+  user-drag: none;
+  -webkit-touch-callout: none;
+}
+
+
+body {
+  font-family: var(--font-soyol), 'Manrope', 'Segoe UI', sans-serif;
+  background: var(--soyol-canvas);
+  color: var(--soyol-ink);
+  line-height: 1.5;
+  letter-spacing: -0.018em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Disable default tap highlight overlay on iOS/Android */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Allow text selection only on form fields or elements with .selectable */
+input,
+textarea,
+select {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+}
+
+.selectable {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+}
+
+/* Subtle native-like press feedback on buttons and interactive items */
+.btn-tap-active:active,
+button:active:not(:disabled),
+a.btn-tap-active:active {
+  transform: scale(0.97) !important;
+  opacity: 0.9;
+  transition: transform 0.08s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+
+/* Capacitor native (iOS/Android) polish */
+html.cap-native,
+html.cap-native body {
+  height: 100%;
+}
+
+/* Faster tap response — no 300ms delay on mobile */
+html.cap-native button,
+html.cap-native a,
+html.cap-native [role="button"] {
+  touch-action: manipulation;
+}
+
+/* Subtle page enter — feels native, not a full reload */
+html.cap-native main {
+  animation: native-page-in 0.12s ease-out;
+}
+
+@keyframes native-page-in {
+  from {
+    opacity: 0.94;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* iOS safe area — horizontal/bottom only; top handled by fixed headers */
+@supports (padding: max(0px)) {
+  html.cap-native body {
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+}
+
+input,
+textarea,
+select {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
+/* Orange Gradient */
+.gradient-orange {
+  background: linear-gradient(135deg, #FF7900 0%, #ff8c1a 100%);
+}
+
+.gradient-orange-light {
+  background: linear-gradient(135deg, #FF7900 0%, #FFB88C 100%);
+}
+
+.gradient-text-orange {
+  background: linear-gradient(135deg, #FF7900 0%, #ff8c1a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glassmorphism (Clean White) */
+.glass-white {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid #FF7900;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* Orange Glow */
+.glow-orange {
+  box-shadow: 0 4px 20px rgba(255, 121, 0, 0.3);
+  transition: all 0.15s ease;
+}
+
+.glow-orange:hover {
+  box-shadow: 0 8px 30px rgba(255, 121, 0, 0.4), 0 4px 15px rgba(255, 121, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Orange Search Focus Glow */
+.search-orange-glow:focus {
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1), 0 4px 12px rgba(249, 115, 22, 0.15);
+  border-color: rgb(249, 115, 22);
+}
+
+/* Premium Orange Gradient Button */
+.btn-orange-gradient {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-orange-gradient:hover {
+  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Card Clean Shadow */
+.card-clean {
+  background: white;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-clean:hover {
+  border-color: #FF7900;
+  box-shadow: 0 8px 24px rgba(255, 121, 0, 0.15);
+  transform: translateY(-4px);
+}
+
+/* Floating */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Icon Bounce Animation */
+@keyframes iconBounce {
+
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-4px) scale(1.05);
+  }
+}
+
+.icon-bounce:hover {
+  animation: iconBounce 0.6s ease-in-out;
+}
+
+/* Smooth Icon Float */
+@keyframes iconFloat {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.icon-float:hover {
+  animation: iconFloat 1s ease-in-out infinite;
+}
+
+/* Orange Border Accent */
+.border-accent {
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.border-accent:hover {
+  border-bottom-color: #FF7900;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #FF7900;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F5F5F5;
+}
+
+/* Hide Scrollbar Utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Shimmer Animation for Search Bar */
+@keyframes shimmer {
+  0% {
+    background-position: 200% center;
+  }
+
+  100% {
+    background-position: -200% center;
+  }
+}
+
+.animate-shimmer-border {
+  background-size: 200% auto;
+  animation: shimmer 4s linear infinite;
+}
+
+/* Disable double-tap to zoom on mobile (touch devices) */
+@media (max-width: 768px) {
+  html {
+    touch-action: manipulation;
+    -ms-touch-action: manipulation;
+  }
+
+  * {
+    touch-action: manipulation;
+  }
+}
+
+/* Mobile bottom nav safe area (notched devices) */
+.safe-area-pb {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+}
+
+/* Mobile Responsive Utilities */
+@media (max-width: 640px) {
+
+  /* Prevent horizontal scroll on mobile */
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Better touch targets for mobile */
+  button,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Optimize text readability on mobile */
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  /* Better spacing on mobile */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* Safe area for notched devices (iPhone X, etc.) */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
+}
+
+/* Prevent zoom on input focus (iOS) */
+@media (max-width: 768px) {
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* Smooth drawer animation performance */
+.drawer-content {
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Better tap highlight */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Luxury Glassmorphism */
+.luxury-glass {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+.luxury-glass-light {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+}
+
+/* Premium Hover Effects */
+.luxury-hover {
+  transition: all 0.15s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.luxury-hover:hover {
+  transform: translateY(-1px);
+}
+
+/* Smooth Underline Animation */
+.luxury-link {
+  position: relative;
+}
+
+.luxury-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.luxury-link:hover::after {
+  transform: scaleX(1);
+}
+
+/* Mobile Navigation Drawer Animations */
+@media (max-width: 1024px) {
+  .mobile-drawer {
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .mobile-drawer.open {
+    transform: translateX(0);
+  }
+
+  /* Prevent body scroll when drawer is open */
+  body.drawer-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+  }
+}
+
+/* Responsive Grid Utilities */
+.responsive-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .responsive-grid-2 {
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .responsive-grid-2 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-grid-2 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+/* Touch-friendly buttons on mobile */
+@media (max-width: 768px) {
+
+  button,
+  a.button,
+  .button {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Slightly larger touch targets for icon buttons */
+  button[aria-label],
+  button.icon-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Optimize images for mobile */
+@media (max-width: 640px) {
+  img {
+    image-rendering: -webkit-optimize-contrast;
+  }
+}
+
+/* Smooth scrolling on mobile */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Better focus states for accessibility */
+@media (max-width: 768px) {
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid #FF7900;
+    outline-offset: 2px;
+  }
+}
+
+/* Prevent layout shifts on mobile */
+@media (max-width: 640px) {
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Better mobile modal/drawer backdrop */
+.mobile-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Optimize transforms for mobile performance */
+.mobile-slide {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Search dropdown entrance */
+@keyframes searchDropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-dropdown-enter {
+  animation: searchDropdownFade 0.15s ease-out;
+}
+
+@layer utilities {
+  .smooth-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  .gpu {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .no-tap {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Premium Reveal Animation */
+  .reveal-card {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1), transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+    will-change: opacity, transform;
+  }
+
+  .reveal-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .mobile-nav-pb {
+    padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  }
+
+  @media (min-width: 1024px) {
+    .mobile-nav-pb {
+      padding-bottom: 0 !important;
+    }
+  }
+
+  /* --- iOS Premium Layout Utilities --- */
+  .native-header-offset {
+    padding-top: calc(52px + env(safe-area-inset-top, 0px));
+  }
+
+  .product-header-offset {
+    padding-top: calc(44px + env(safe-area-inset-top, 0px));
+  }
+
+  @media (min-width: 1024px) {
+    .native-header-offset,
+    .product-header-offset {
+      padding-top: 0;
+    }
+  }
+
+  .mobile-navbar-spacer {
+    height: calc(52px + env(safe-area-inset-top, 0px));
+  }
+
+  @media (min-width: 1024px) {
+    .mobile-navbar-spacer {
+      height: unset;
+    }
+  }
+  .ios-shadow-sm {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 2px 8px rgba(0,0,0,0.03);
+  }
+  
+  .ios-shadow-md {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03), 0 10px 28px rgba(0,0,0,0.04);
+  }
+
+  .ios-shadow-lg {
+    box-shadow: 0 10px 24px rgba(0,0,0,0.04), 0 20px 48px rgba(0,0,0,0.06);
+  }
+
+  .ios-blur {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+  }
+
+  .ios-card {
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    border: 1px solid rgba(0,0,0,0.03);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+  }
+
+  /* Inset Grouped style layout (iOS settings style) */
+  .ios-grouped-list {
+    background-color: #FFFFFF;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.035);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  }
+
+  .ios-grouped-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    background-color: #FFFFFF;
+    transition: background-color 0.15s ease;
+  }
+
+  .ios-grouped-item:active {
+    background-color: #EFEEF2;
+  }
+}
+
+/* ── Disable hover flashes on touch devices ─────────────────────────────── */
+/* Hover events on Android/iOS fire on tap and create a visual flash.        */
+/* Disabling them makes taps feel instant — no visual change on first tap.   */
+@media (hover: none) and (pointer: coarse) {
+  .card-clean:hover {
+    transform: none !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04) !important;
+    border-color: #f0f0f0 !important;
+  }
+
+  .glow-orange:hover {
+    transform: none !important;
+    box-shadow: 0 4px 20px rgba(255, 121, 0, 0.3) !important;
+  }
+
+  .btn-orange-gradient:hover {
+    transform: none !important;
+  }
+}
+
+/* Capacitor Admin App Fullscreen Spacing */
+.cap-admin-fullscreen {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: 0;
+}
+
+@media (max-width: 1023px) {
+  .cap-admin-fullscreen {
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+  }
+}

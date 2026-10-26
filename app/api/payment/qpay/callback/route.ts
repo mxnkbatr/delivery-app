@@ -1,0 +1,116 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { getCollection } from '@/lib/mongodb';
+import { ObjectId } from 'mongodb';
+import { checkPayment } from '@/lib/qpay';
+import { deductInventory } from '@/lib/inventory';
+import { notifyOrderStatusUpdate, notifyOrderPlaced } from '@/lib/orderNotifications';
+
+export async function GET(req: NextRequest) {
+    return POST(req);
+}
+
+export async function POST(req: NextRequest) {
+    try {
+        const { searchParams } = new URL(req.url);
+
+        // 1. [Fix Issue 3] Validate Callback Secret / Signature (if configured in env)
+        const secret = process.env.QPAY_CALLBACK_SECRET;
+        if (secret) {
+            const provided = req.headers.get('x-qpay-signature') || searchParams.get('secret');
+            if (provided !== secret) {
+                return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+            }
+        }
+
+        const orderId = searchParams.get('order_id');
+
+        // 2. [Fix Issue 4] Body parsing completely removed here to avoid GET crashes
+
+        if (!orderId) {
+            return NextResponse.json({ error: 'Missing order_id' }, { status: 400 });
+        }
+
+        let orderObjectId: ObjectId;
+        try {
+            orderObjectId = new ObjectId(orderId);
+        } catch {
+            return NextResponse.json({ error: 'Invalid order_id' }, { status: 400 });
+        }
+
+        const ordersCollection = await getCollection('orders');
+        const order = await ordersCollection.findOne({ _id: orderObjectId });
+
+        if (!order || order.status !== 'pending') {
+            return NextResponse.json({ success: true }); // Already processed or not found
+        }
+
+        // QPay-с шууд баталгаажуул
+        if (!order.qpayInvoiceId) {
+            return NextResponse.json({ error: 'No invoice found' }, { status: 400 });
+        }
+
+        const paymentStatus = await checkPayment(order.qpayInvoiceId);
+        if (!paymentStatus.paid) {
+            return NextResponse.json({ success: true }); // Not actually paid yet
+        }
+
+        await ordersCollection.updateOne(
+            { _id: orderObjectId },
+            {
+                $set: {
+                    status: 'confirmed',
+                    paidAt: new Date(),
+                    updatedAt: new Date()
+                }
+            }
+        );
+
+        // Deduct inventory since order is now confirmed
+        try {
+            if (order.items && order.items.length > 0) {
+                await deductInventory(orderId, order.items);
+            }
+        } catch (e) {
+            console.error('[QPay Callback] Failed to deduct inventory:', e);
+        }
+
+        // Notify Shop Admin (existing — do not remove)
+        try {
+            const { notifyAdminNewOrder } = await import('@/lib/adminNotifications');
+            await notifyAdminNewOrder(
+                orderId, 
+                order.shipping?.fullName || 'Хэрэглэгч', 
+                order.total || order.totalPrice || 0
+            );
+        } catch (e) {
+            console.error('[QPay Callback] Failed to notify admin:', e);
+        }
+
+        // Delivery Ops: shop delivery orders → admin release list (not courier queue yet)
+        try {
+            const { routeShopOrderToDeliveryAdmin } = await import('@/lib/delivery/shopOrderBridge');
+            await routeShopOrderToDeliveryAdmin(
+                { ...order, status: 'confirmed' },
+                orderId
+            );
+        } catch (e) {
+            console.error('[QPay Callback] Delivery admin bridge failed:', e);
+        }
+
+        // Couriers are notified when admin releases to delivery queue
+
+        // Notify Customer (Order received first, then payment confirmed)
+        notifyOrderPlaced(orderId).catch((err) => {
+            console.error('[QPay Callback] Failed to send order placed notification:', err);
+        });
+
+        notifyOrderStatusUpdate(orderId, 'confirmed').catch((err) => {
+            console.error('[QPay Callback] Failed to send status update notification:', err);
+        });
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error('[QPay Callback] Error:', error);
+        return NextResponse.json({ error: 'Callback failed' }, { status: 500 });
+    }
+}
